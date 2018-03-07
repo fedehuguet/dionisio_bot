@@ -1,3 +1,6 @@
+import requests
+import json
+import keys
 import os
 import time
 import re
@@ -12,3 +15,7 @@ starterbot_id = None
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "do"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+
+resp = requests.get('http://api.dionisio.test/party')
+r = resp.json()
+print(r['content'])
