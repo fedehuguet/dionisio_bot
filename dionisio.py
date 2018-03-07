@@ -6,7 +6,6 @@ import time
 import re
 from slackclient import SlackClient
 slack_bot_token = keys.SLACK_BOT_TOKEN
-#print(slack_bot_token)
 # instantiate Slack client
 slack_client = SlackClient(slack_bot_token)
 # starterbot's user ID in Slack: value is assigned after the bot starts up
@@ -16,7 +15,7 @@ starterbot_id = None
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "Hello"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
-greets = ['Hello','hello','Hi','hi','yo'];
+greets = ['Hello','hello','Hi','hi','Yo','yo','Hola','hola'];
 
 def parse_bot_commands(slack_events):
     """
@@ -26,19 +25,24 @@ def parse_bot_commands(slack_events):
     """
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
-            user_id, message = parse_direct_mention(event["text"])
+            user_id, message = parse_direct_mention(event["text"], event["channel"])
             if user_id == starterbot_id:
                 return message, event["channel"]
     return None, None
 
-def parse_direct_mention(message_text):
+def parse_direct_mention(message_text, channel):
     """
         Finds a direct mention (a mention that is at the beginning) in message text
         and returns the user ID which was mentioned. If there is no direct mention, returns None
     """
     matches = re.search(MENTION_REGEX, message_text)
     # the first group contains the username, the second group contains the remaining message
-    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
+    if matches:
+        return (matches.group(1), matches.group(2).strip())	
+    elif channel.startswith('D'):
+        return (starterbot_id,message_text)
+    else: 
+    	return (None,None)
 
 def handle_command(command, channel):
     """
