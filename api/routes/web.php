@@ -15,3 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::resource('party', "PartyController");
+Route::resource('cotizacion', "CotizacionController");

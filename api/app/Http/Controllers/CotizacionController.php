@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class PartyController extends Controller
+class CotizacionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +14,7 @@ class PartyController extends Controller
      */
     public function index()
     {
-        
+        //
     }
 
     /**
@@ -34,7 +35,21 @@ class PartyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $cotizacion = new \App\Cotizacion;
+        $cotizacion->fill($data);
+        if($cotizacion->save()) 
+            return response()->json([
+                'error' => false,
+                'message' => 'Guardado compa',
+                'content' => $cotizacion
+            ]);
+        return response()->json([
+                'error' => true,
+                'message' => 'No se que paso bro',
+                'content' => []
+            ]);
+        //dd($request);
     }
 
     /**
@@ -45,13 +60,27 @@ class PartyController extends Controller
      */
     public function show($id)
     {
-        if($id == 'greet')
+        $sql = "
+            SELECT 
+                AVG(beer/people) as beer
+                ,AVG(bottles/people) as bottles
+                ,AVG(costBeer/people) as costBeer
+                ,AVG(costBottles/people) as costBottles
+            FROM cotizacion
+            GROUP BY userId
+            HAVING userId = {$id}
+        ";
+        $cotizacion = DB::select($sql);
+        if($cotizacion){
+            $cotizacion = $cotizacion[0];
+            $message_cotizacion = 'Con base a tus fiestas anteriores, promedio por persona: Cervezas: '.$cotizacion->beer .' Botellas: '.$cotizacion->bottles .' Gasto en cervezas: $'.$cotizacion->costBeer.' Gasto en botellas: $'.$cotizacion->costBottles;
             return response()->json([
                 'error' => false,
-                'message' => 'Hi, bro',
-                'content' => []
+                'message' => $message_cotizacion,
+                'content' => $cotizacion
             ]);
-        else return response()->json([
+        }
+        return response()->json([
                 'error' => true,
                 'message' => 'No se que paso bro',
                 'content' => []

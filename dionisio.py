@@ -13,9 +13,12 @@ starterbot_id = None
 
 # constants
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
-EXAMPLE_COMMAND = "Hello"
+EXAMPLE_COMMAND = "Hola"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 greets = ['Hello','hello','Hi','hi','Yo','yo','Hola','hola'];
+questions = ['Peda','peda','Fiesta','fiesta','Voy a hacer una fiesta','voy a hacer una fiesta'];
+cotizaciones = ['Guardar','guardar'];
+
 
 def parse_bot_commands(slack_events):
     """
@@ -44,25 +47,63 @@ def parse_direct_mention(message_text, channel):
     else: 
     	return (None,None)
 
+def get_cotizacion(key):
+    resp = requests.get('http://api.dionisio.test/cotizacion/'+key)
+    r = resp.json()    
+
+    if r['error'] == False:
+        return r['message']
+    else: return r['message']
+
+def store_cotizacion(parameters):
+    parameters = parameters.split()
+    if len(parameters)<6:
+        return None
+    payload = {'userId':1,'beer':parameters[1],'bottles':parameters[2],'costBeer':parameters[3],'costBottles':parameters[4],'people':parameters[5]}
+    resp = requests.post('http://api.dionisio.test/cotizacion', data = payload)
+    r = resp.json() 
+
+    if r['error'] == False:
+        return r['message']
+    else: return r['message']
+
+def handle_api(key):
+    resp = requests.get('http://api.dionisio.test/party/'+key)
+    r = resp.json()
+    if r['error'] == False:
+        return r['message']
+    else: return r['message']
+
 def handle_command(command, channel):
     """
         Executes bot command if the command is known
     """
-    # Default response is help text for the user
-    default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
-
-    # Finds and executes the given command, filling in response
     response = None
-    # This is where you start to implement more commands!
-    answer = False
+    
+    # Check if greet
+    salute = False
     for greet in greets:
         if command.startswith(greet):
-        	answer = True
+        	salute = True
     
-    if answer:
-    	resp = requests.get('http://api.dionisio.test/party')
-        r = resp.json()
-        response = r['content']
+    # Check if question
+    question = False
+    for q in questions:
+        if command.startswith(q):
+            question = True
+    #
+    cotizacion = False
+    for c in cotizaciones:
+        if command.startswith(c):
+            cotizacion = True
+
+    if salute:
+        response = handle_api('greet')
+    elif question:
+        response = get_cotizacion('1')
+    elif cotizacion:
+        response = store_cotizacion(command) 
+    else: response = "No entiendo man. Intenta con *{}*.".format(EXAMPLE_COMMAND)
 
     # Sends the response back to the channel
     slack_client.api_call(
