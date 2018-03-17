@@ -1,10 +1,14 @@
 import requests
 import json
 import keys
-import os
 import time
 import re
 from slackclient import SlackClient
+from rasa_nlu.converters import load_data
+from rasa_nlu.config import RasaNLUConfig
+from rasa_nlu.model import Trainer
+from rasa_nlu.model import Metadata, Interpreter
+
 slack_bot_token = keys.SLACK_BOT_TOKEN
 # instantiate Slack client
 slack_client = SlackClient(slack_bot_token)
@@ -13,12 +17,8 @@ starterbot_id = None
 
 # constants
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
-EXAMPLE_COMMAND = "Hola"
+EXAMPLE_COMMAND = "Hi there"
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
-greets = ['Hello','hello','Hi','hi','Yo','yo','Hola','hola'];
-questions = ['Peda','peda','Fiesta','fiesta','Voy a hacer una fiesta','voy a hacer una fiesta'];
-cotizaciones = ['Guardar','guardar'];
-
 
 def parse_bot_commands(slack_events):
     """
@@ -41,11 +41,11 @@ def parse_direct_mention(message_text, channel):
     matches = re.search(MENTION_REGEX, message_text)
     # the first group contains the username, the second group contains the remaining message
     if matches:
-        return (matches.group(1), matches.group(2).strip())	
+        return (matches.group(1), message_text)	
     elif channel.startswith('D'):
         return (starterbot_id,message_text)
     else: 
-    	return (None,None)
+        return (None,None)
 
 def get_cotizacion(key):
     resp = requests.get('http://api.dionisio.test/cotizacion/'+key)
@@ -67,43 +67,28 @@ def store_cotizacion(parameters):
         return r['message']
     else: return r['message']
 
-def handle_api(key):
+def handle_salute(key):
     resp = requests.get('http://api.dionisio.test/party/'+key)
     r = resp.json()
     if r['error'] == False:
         return r['message']
     else: return r['message']
 
-def handle_command(command, channel):
+def handle_command(interpreter, command, channel):
     """
         Executes bot command if the command is known
     """
     response = None
     
-    # Check if greet
-    salute = False
-    for greet in greets:
-        if command.startswith(greet):
-        	salute = True
-    
-    # Check if question
-    question = False
-    for q in questions:
-        if command.startswith(q):
-            question = True
-    #
-    cotizacion = False
-    for c in cotizaciones:
-        if command.startswith(c):
-            cotizacion = True
+    parsed_message = interpreter.parse(command)
+    print parsed_message
 
-    if salute:
-        response = handle_api('greet')
-    elif question:
-        response = get_cotizacion('1')
-    elif cotizacion:
-        response = store_cotizacion(command) 
-    else: response = "No entiendo man. Intenta con *{}*.".format(EXAMPLE_COMMAND)
+    # Check intent
+    if parsed_message['intent']['name'] == "greeting":
+       response = handle_salute('greeting')
+    elif parsed_message['intent']['name'] == "goodbye":
+       response = handle_salute('goodbye')
+    else: response = "Sorry I could not understand, try with *{}*.".format(EXAMPLE_COMMAND)
 
     # Sends the response back to the channel
     slack_client.api_call(
@@ -113,14 +98,35 @@ def handle_command(command, channel):
     )
 
 if __name__ == "__main__":
+    
+    #NLU Rasa implementation
+    print("Starting training")
+    
+    training_data = load_data('data/demo_dionisio.json')
+    print("Data loaded")
+    
+    trainer = Trainer(RasaNLUConfig("configs/config_spacy.json"))
+    print("Trainer instantiated")
+    
+    trainer.train(training_data)
+    print("Trainer trained")
+    
+    model_directory = trainer.persist('./models')
+    print("Persistence finished")
+
+    print("Instantiating interpreter...")
+    interpreter = Interpreter.load(model_directory, RasaNLUConfig("configs/config_spacy.json"))
+    print("Finished")
+    #interpreter = Interpreter.load('./models/default/model_20180316-163725', RasaNLUConfig("configs/config_spacy.json"))
+    
     if slack_client.rtm_connect(with_team_state=False):
-        print("Starter Bot connected and running!")
+        print("Chat bot running!")
         # Read bot's user ID by calling Web API method `auth.test`
         starterbot_id = slack_client.api_call("auth.test")["user_id"]
         while True:
             command, channel = parse_bot_commands(slack_client.rtm_read())
             if command:
-                handle_command(command, channel)
+                handle_command(interpreter, command, channel)
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection failed. Exception traceback printed above.")

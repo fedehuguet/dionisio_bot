@@ -1,0 +1,173 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hey dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hey Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hey brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hey @dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hey"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hi dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hi Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hi brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hi @dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hi"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hello dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hello Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hello brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hello @dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "hello"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "greetings dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "greetings Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "greetings brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "greetings @dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "greetings"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "yo dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "yo Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "yo brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "yo @dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "yo"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "Dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "brother"
+      }, 
+      {
+        "entities": [], 
+        "intent": "greeting", 
+        "text": "@dionisio"
+      }, 
+      {
+        "entities": [], 
+        "intent": "goodbye", 
+        "text": "goodbye"
+      }, 
+      {
+        "entities": [], 
+        "intent": "goodbye", 
+        "text": "thanks"
+      }, 
+      {
+        "entities": [], 
+        "intent": "goodbye", 
+        "text": "thankyou"
+      }, 
+      {
+        "entities": [], 
+        "intent": "goodbye", 
+        "text": "thank you"
+      }
+    ], 
+    "entity_synonyms": [], 
+    "regex_features": []
+  }
+}

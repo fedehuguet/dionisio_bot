@@ -45,15 +45,21 @@ class PartyController extends Controller
      */
     public function show($id)
     {
-        if($id == 'greet')
+        if($id == 'greeting')
             return response()->json([
                 'error' => false,
                 'message' => 'Hi, bro',
                 'content' => []
             ]);
+        else if($id == 'goodbye')
+            return response()->json([
+                'error' => false,
+                'message' => 'See ya later',
+                'content' => []
+            ]);
         else return response()->json([
                 'error' => true,
-                'message' => 'No se que paso bro',
+                'message' => 'My bad',
                 'content' => []
             ]);
     }

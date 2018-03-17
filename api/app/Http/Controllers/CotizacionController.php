@@ -41,12 +41,12 @@ class CotizacionController extends Controller
         if($cotizacion->save()) 
             return response()->json([
                 'error' => false,
-                'message' => 'Guardado compa',
+                'message' => 'Uploaded bro',
                 'content' => $cotizacion
             ]);
         return response()->json([
                 'error' => true,
-                'message' => 'No se que paso bro',
+                'message' => 'My bad',
                 'content' => []
             ]);
         //dd($request);
@@ -73,7 +73,7 @@ class CotizacionController extends Controller
         $cotizacion = DB::select($sql);
         if($cotizacion){
             $cotizacion = $cotizacion[0];
-            $message_cotizacion = 'Con base a tus fiestas anteriores, promedio por persona: Cervezas: '.$cotizacion->beer .' Botellas: '.$cotizacion->bottles .' Gasto en cervezas: $'.$cotizacion->costBeer.' Gasto en botellas: $'.$cotizacion->costBottles;
+            $message_cotizacion = 'Based on previous data, average per person: Beers: '.$cotizacion->beer .' Bottles: '.$cotizacion->bottles .' Cost of beers: $'.$cotizacion->costBeer.' Cost of bottles: $'.$cotizacion->costBottles;
             return response()->json([
                 'error' => false,
                 'message' => $message_cotizacion,
@@ -82,7 +82,7 @@ class CotizacionController extends Controller
         }
         return response()->json([
                 'error' => true,
-                'message' => 'No se que paso bro',
+                'message' => 'My bad',
                 'content' => []
             ]);
     }
